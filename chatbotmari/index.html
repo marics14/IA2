@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ <textarea cols="40" rows="20" name="prompt" id="prompt"></textarea>
+ <br>
+ <br>
+ <input type="button" value="Enviar"/>
+ <br>
+ <br>
+ <label>Resposta IA</label>   
+ <textarea cols="40" rows="20" name="resposta" id="resposta"></textarea>
+</body>
+</html>
+<script src="script.js"></script>
+
+<body>
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+      </script>
+
+       
+  <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+
+    
+    const API_KEY = "AIzaSyAWTrDOniUHBoCsWPF5iZFlPSxlyz9jlHE";
+
+    
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+
+    async function run() {
+  const prompt = "você é um médico pediatra que está consultando a minha filha pois ela está muito doente, mas você não vai me responder qual remédio usar, apenas vai ficar descrevendo o que minha filha tem"
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  document.getElementById("resposta").value = text;
+  console.log(text);
+
+}
+
+run();
+</script>
+
+
+</body>
