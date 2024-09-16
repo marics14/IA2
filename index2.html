@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="style.css"> <!-- Mantém seu estilo original -->
+</head>
+<body>
+    <!-- Caixa de texto para o prompt do usuário -->
+    <textarea cols="40" rows="20" name="prompt" id="prompt" placeholder="Digite sua mensagem..."></textarea>
+    <br>
+    <br>
+    <!-- Botão para enviar a mensagem -->
+    <input type="button" value="Enviar" id="send-button"/>
+    <br>
+    <br>
+    <!-- Caixa de texto para exibir a resposta da IA -->
+    <label>Resposta IA</label>   
+    <textarea cols="40" rows="20" name="resposta" id="resposta" placeholder="A resposta aparecerá aqui..."></textarea>
+
+    <!-- Script para gerenciar o envio de mensagens -->
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+      </script>
+
+       
+  <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+
+    
+    const API_KEY = "AIzaSyAWTrDOniUHBoCsWPF5iZFlPSxlyz9jlHE";
+
+    
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+
+    async function run() {
+  const prompt = "você é um médico pediatra que está consultando a minha filha pois ela está muito doente, mas você não vai me responder qual remédio usar, apenas vai ficar descrevendo o que minha filha tem"
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  document.getElementById("resposta").value = text;
+  console.log(text);
+
+}
+
+run();
+
+
+sendButton.addEventListener('click', run);
+
+
+</script>
+</body>
+</html>
