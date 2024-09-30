@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Enviar a mensagem para o backend
-        fetch('/api/conversations', {
+        axios('/api/conversations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Mensagem enviada:', data);
 
             // Simular resposta do bot ou usar resposta do backend
-            fetch('/api/bot-response', {
+            axios('/api/bot-response', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
