@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="style.css"> <!-- Mantém seu estilo original -->
 </head>
 <body>
- <textarea cols="40" rows="20" name="prompt" id="prompt"></textarea>
- <br>
- <br>
- <input type="button" id="send-button" value="Enviar"/>
- <br>
- <br>
- <label>Resposta IA</label>   
- <textarea cols="40" rows="20" name="resposta" id="resposta"></textarea>
-</body>
-</html>
-<script src="script.js"></script>
+    <!-- Caixa de texto para o prompt do usuário -->
+    <textarea cols="40" rows="20" name="prompt" id="prompt" placeholder="Digite sua mensagem..."></textarea>
+    <br>
+    <br>
+    <!-- Botão para enviar a mensagem -->
+    <input type="button" value="Enviar" id="send-button"/>
+    <br>
+    <br>
+    <!-- Caixa de texto para exibir a resposta da IA -->
+    <label>Resposta IA</label>   
+    <textarea cols="40" rows="20" name="resposta" id="resposta" placeholder="A resposta aparecerá aqui..."></textarea>
 
-<body>
+    <!-- Script para gerenciar o envio de mensagens -->
     <script type="importmap">
         {
           "imports": {
@@ -52,7 +52,11 @@
 }
 
 run();
+
+
+document.getElementById("send-button").addEventListener('click', run);
+
+
 </script>
-
-
 </body>
+</html>

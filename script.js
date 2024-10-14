@@ -1,34 +1,55 @@
-// // document.addEventListener('DOMContentLoaded', function() {
-//     const messages = document.getElementById('messages');
-//     const userInput = document.getElementById('prompt');
-//     const sendButton = document.getElementById('send-button');
+document.addEventListener('DOMContentLoaded', function() {
+    const promptTextarea = document.getElementById('prompt');  // Onde o usuário digita a mensagem
+    const respostaTextarea = document.getElementById('resposta'); // Onde a resposta será exibida
+    const sendButton = document.getElementById('send-button'); // Botão de envio
 
-//     function addMessage(text, sender) {
-//         const messageElement = document.createElement('div');
-//         messageElement.className = sender;
-//         messageElement.textContent = text;
-//         messages.appendChild(messageElement);
-//         messages.scrollTop = messages.scrollHeight;
-//     }
+    // Função para lidar com o clique do botão "Enviar"
+    sendButton.addEventListener('click', function() {
+        const userMessage = promptTextarea.value.trim(); // Captura o valor da área de texto
 
-//     function handleUserInput() {
-//         const text = userInput.value.trim();
-//         if (text === '') return;
+        if (userMessage === '') {
+            return; // Se o campo estiver vazio, não faça nada
+        }
 
-//         addMessage(text, 'user-message');
-//         userInput.value = '';
+        // Enviar a mensagem para o backend
+        axios('/api/conversations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: '12345', // Substitua com um ID real ou dinâmico
+                message: userMessage,
+                sender: 'user'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Mensagem enviada:', data);
 
-//         // Simulação de resposta do chatbot
-//         // setTimeout(() => {
-//         //     addMessage('Olá! Como posso ajudar?', 'bot-message');
-//         // }, 500);
-//         run();
-//     }
+            // Simular resposta do bot ou usar resposta do backend
+            axios('/api/bot-response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: '12345', // Mesmo ID do usuário
+                    message: userMessage
+                })
+            })
+            .then(res => res.json())
+            .then(botResponse => {
+                // Exibe a resposta do bot na área de texto "resposta"
+                respostaTextarea.value = botResponse.response || 'Erro ao obter resposta do bot.';
+            })
+            .catch(error => {
+                console.error('Erro ao obter resposta do bot:', error);
+            });
 
-//     sendButton.addEventListener('click', handleUserInput);
-//     userInput.addEventListener('keypress', function(event) {
-//         if (event.key === 'Enter') {
-//             handleUserInput();
-//         }
-//     });
-// // });
+        })
+        .catch(error => {
+            console.error('Erro ao enviar mensagem:', error);
+        });
+    });
+});
