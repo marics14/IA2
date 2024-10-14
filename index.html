@@ -1,58 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatBot</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
- <textarea cols="40" rows="20" name="prompt" id="prompt"></textarea>
- <br>
- <br>
- <input type="button" id="send-button" value="Enviar"/>
- <br>
- <br>
- <label>Resposta IA</label>   
- <textarea cols="40" rows="20" name="resposta" id="resposta"></textarea>
-</body>
-</html>
-<script src="script.js"></script>
 
 <body>
-    <script type="importmap">
-        {
-          "imports": {
-            "@google/generative-ai": "https://esm.run/@google/generative-ai"
-          }
-        }
-      </script>
+  <!-- Título Dr. Bot -->
+  <h1>Dr. Bot</h1>
 
-       
+  <!-- Área do Chatbot -->
+  <textarea cols="40" rows="5" style="resize: none;" name="prompt" id="prompt"></textarea>
+  <br>
+  <br>
+  <input type="button" id="send-button" value="Enviar" />
+  <br>
+  <br>
+  <label>Resposta IA</label>
+  <div id="messages"> </div>
+
+  <!-- Rodapé com a autoria -->
+  <footer>
+    <p>Autoria: Mariana</p>
+  </footer>
+
+  <!-- Script para Google Generative AI e chatbot -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+  </script>
+
   <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    
     const API_KEY = "AIzaSyAWTrDOniUHBoCsWPF5iZFlPSxlyz9jlHE";
-
-    
     const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const messages = document.getElementById('messages');
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+    async function run(promptusuario) {
+      const promptDev = "Você é um médico, denominado Dr. Bot, que está me consultando, mas também atende a consultas solicitadas para outras pessoas caso eu deseje. Vai me indicar melhorias para o meu problema, e hábitos que podem melhorar os meus sintomas, além de que, caso eu solicite medicamentos, diga para consultar um verdadeiro especialista.";
+      const promptcompleto = `${promptDev}\n\nUsuário: ${promptusuario}`;
 
-    async function run() {
-  const prompt = "você é um médico pediatra que está consultando a minha filha pois ela está muito doente, mas você não vai me responder qual remédio usar, apenas vai ficar descrevendo o que minha filha tem"
+      try {
+        const result = await model.generateContent(promptcompleto);
+        const response = await result.response;
+        const text = await response.text();
+        
+        addMessage(text, 'bot-message');
+        console.log(text);
+      } catch (error) {
+        console.error('Erro ao gerar resposta:', error);
+        addMessage('Erro ao gerar resposta.', 'bot-message');
+      }
+    }
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
-  document.getElementById("resposta").value = text;
-  console.log(text);
+    const userInput = document.getElementById('prompt');
+    const sendButton = document.getElementById('send-button');
 
-}
+    function addMessage(text, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.className = sender;
+      messageElement.textContent = text;
+      messages.appendChild(messageElement);
+      messages.scrollTop = messages.scrollHeight;  // Para rolar a tela para baixo automaticamente
+    }
 
-run();
-</script>
+    function handleUserInput() {
+      const text = userInput.value.trim();
+      if (text === '') return;
 
+      addMessage(text, 'user-message');
+      userInput.value = '';
 
+      run(text);  // Passa o input do usuário para a função run()
+    }
+
+    sendButton.addEventListener('click', handleUserInput);
+    userInput.addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();  // Para evitar a quebra de linha ao pressionar Enter
+        handleUserInput();
+      }
+    });
+
+  </script>
 </body>
+
+</html>
