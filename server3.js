@@ -6,10 +6,10 @@ const bodyParser = require('body-parser');
 
 // Cria uma instância do aplicativo Express
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json())
+const port = 3000;
 
 // Configura o middleware
-app.use(bodyParser.json());
 app.use(cors());
 // Conectar ao MongoDB
 const mongoURI = 'mongodb+srv://marianadecastrosilva234:K4esJlEOdB5LTGT@cluster0.ywqev.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
@@ -50,25 +50,20 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Endpoint para registrar uma mensagem no histórico de conversas
-app.post('/api/conversations', async (req, res) => {
+app.post("/api/conversations", async (req, res) => {
   const { userId, message, sender } = req.body;
 
-  if (!userId || !message || !sender) {
-    return res.status(400).json({ message: 'userId, message e sender são obrigatórios' });
-  }
+  console.log(req.body)
+
 
   try {
-    const newMessage = new Conversation({ userId, message, sender });
-    await newMessage.save();
-    res.status(201).json(newMessage);
+    const newConversation = new Conversation({ userId, message, sender });
+    await newConversation.save();
+    res.status(201).json(newConversation);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao salvar mensagem', error });
+    res.status(500).json({ message: 'Erro ao salvar a conversa', error });
   }
-});
-
-// Serve arquivos estáticos (como seu frontend)
-app.use(express.static('public'));
+})
 
 // Inicia o servidor
 app.listen(port, () => {
