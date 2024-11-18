@@ -42,14 +42,47 @@
     const API_KEY = "AIzaSyAWTrDOniUHBoCsWPF5iZFlPSxlyz9jlHE";
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 40,
+      maxOutputTokens: 8192,
+      responseMimeType: "text/plain",
+    };
     const messages = document.getElementById('messages');
+    const promptDev = "Você é um médico, denominado Dr. Bot, que está me consultando, mas também atende a consultas solicitadas para outras pessoas caso eu deseje. Vai me indicar melhorias para o meu problema, e hábitos que podem melhorar os meus sintomas, além de que, caso eu solicite medicamentos, diga para consultar um verdadeiro especialista.";
+    
+    let history=[{
+      role: "user", // Define o papel (por exemplo, "assistant")
+        parts: [
+          { text: promptDev }, // Adiciona um novo texto
+        ],
+    }
+
+    ];
 
     async function run(promptusuario) {
-      const promptDev = "Você é um médico, denominado Dr. Bot, que está me consultando, mas também atende a consultas solicitadas para outras pessoas caso eu deseje. Vai me indicar melhorias para o meu problema, e hábitos que podem melhorar os meus sintomas, além de que, caso eu solicite medicamentos, diga para consultar um verdadeiro especialista.";
-      const promptcompleto = `${promptDev}\n\nUsuário: ${promptusuario}`;
 
+      //const promptcompleto = ${promptusuario};
+
+
+
+      history.push({
+        role: "user", // Define o papel (por exemplo, "assistant")
+        parts: [
+          { text: promptusuario }, // Adiciona um novo texto
+        ],
+      });
+      
       try {
-        const result = await model.generateContent(promptcompleto);
+
+        const chatSession = model.startChat({
+          generationConfig,
+         history
+        });
+
+        // const result = await model.generateContent(promptusuario);
+        const result = await chatSession.sendMessage(promptusuario);
         const response = await result.response;
         const text = await response.text();
 
